@@ -3,17 +3,18 @@
    and measure the total runtime. Return the total runtime as a float value.
 """
 import asyncio
+from time import perf_counter
 async_comprehension = __import__('1-async_comprehension').async_comprehension
 
 
 async def measure_runtime() -> float:
     """ Return the total runtime as a float value """
-    start = asyncio.get_running_loop().time()
+    start = perf_counter()
     await asyncio.gather(
         async_comprehension(),
         async_comprehension(),
         async_comprehension(),
         async_comprehension()
     )
-    end = asyncio.get_running_loop().time()
+    end = perf_counter()
     return end - start
