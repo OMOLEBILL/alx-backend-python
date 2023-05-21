@@ -13,6 +13,7 @@ from typing import (
 )
 access_nested_map = __import__("utils").access_nested_map
 get_json = __import__("utils").get_json
+memoize = __import__("utils").memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -45,13 +46,14 @@ class TestAccessNestedMap(unittest.TestCase):
         with self.assertRaises(KeyError):
             access_nested_map(nested_map, path)
 
+
 class TestGetJson(unittest.TestCase):
     """ We test the get_json method from the utils module"""
     @parameterized.expand([
         ("http://example.com", {"payload": True}),
-        ("http://holberton.io",{"payload": False})
+        ("http://holberton.io", {"payload": False})
     ])
-    def test_get_json(self, test_url:str, test_payload:Dict):
+    def test_get_json(self, test_url: str, test_payload: Dict):
         """ We test the get_json method
             args:
                 @test_url the unique resource locator
@@ -63,3 +65,29 @@ class TestGetJson(unittest.TestCase):
             result = get_json(test_url)
             self.assertEqual(result, test_payload)
             mock_request.assert_called_once()
+
+
+class TestMemoize(unittest.TestCase):
+    """We test the memoize method from the utils.py"""
+
+    def test_memoize(self):
+        """We test the memoize method"""
+        class TestClass:
+            """Class to test memoize"""
+
+            def a_method(self):
+                """Weturn 42 if the a_method is called"""
+                return 42
+
+            @memoize
+            def a_property(self):
+                """We return the a_method"""
+                return self.a_method()
+
+        with patch.object(TestClass, "a_method",
+                          return_value=42) as mocked:
+            test_class = TestClass()
+            result = test_class.a_property
+            result = test_class.a_property
+            self.assertEqual(result, 42)
+            mocked.assert_called_once()
