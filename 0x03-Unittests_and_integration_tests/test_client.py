@@ -4,7 +4,7 @@
 
 
 from unittest import TestCase
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
 from typing import (
@@ -25,3 +25,12 @@ class TestGithubOrgClient(TestCase):
         instance = GithubOrgClient(url)
         self.assertEqual(instance.org, expected)
         mocked.assert_called_once()
+
+    def test_public_repos_url(self):
+        """We test the _public_repos_url"""
+        expected = "https://api.github.com/orgs/google/repos"
+        diction = {"repos_url": "https://api.github.com/orgs/google/repos"}
+        with patch("client.GithubOrgClient.org",
+                   PropertyMock(return_value=diction)):
+            Instance = GithubOrgClient("added")
+            self.assertEqual(Instance._public_repos_url, expected)
