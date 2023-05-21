@@ -27,3 +27,17 @@ class TestAccessNestedMap(unittest.TestCase):
             path: the sequence of the keys to the dictionary
         """
         self.assertEqual(access_nested_map(nested_map, path), expected)
+
+    @parameterized.expand([
+        ({}, ("a",)),
+        ({"a": 1}, ("a", "b"))
+    ])
+    def test_access_nested_map_exception(self, nested_map: Mapping,
+                                         path: Sequence):
+        """We test if a keyError is raised
+        args:
+            @nested_map : the nested dictionary
+            @path : the sequence containg keys to the dict
+        """
+        with self.assertRaises(KeyError):
+            access_nested_map(nested_map, path)
