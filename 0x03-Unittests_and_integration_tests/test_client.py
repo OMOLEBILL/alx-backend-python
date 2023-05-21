@@ -44,3 +44,12 @@ class TestGithubOrgClient(TestCase):
                    PropertyMock(return_value=result)):
             Instance = GithubOrgClient("added")
             self.assertCountEqual(Instance._public_repos_url, result)
+
+    @parameterized.expand([
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False)
+    ])
+    def test_has_license(self, repo: Dict, license_key: str, expected: bool):
+        """ We test the has license method"""
+        instance = GithubOrgClient.has_license(repo, license_key)
+        self.assertEqual(instance, expected)
