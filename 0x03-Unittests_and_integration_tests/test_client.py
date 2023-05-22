@@ -5,8 +5,9 @@
 
 from unittest import TestCase
 from unittest.mock import patch, Mock, PropertyMock
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
+from fixtures import TEST_PAYLOAD
 from typing import (
     Dict
 )
@@ -53,3 +54,32 @@ class TestGithubOrgClient(TestCase):
         """ We test the has license method"""
         instance = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(instance, expected)
+
+
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    TEST_PAYLOAD
+)
+class TestIntegrationGithubOrgClient(TestCase):
+    """ We try to introduce intergraion testing"""
+    @classmethod
+    def setUpClass(cls) -> None:
+        """We set the class"""
+        own = TEST_PAYLOAD[0][0]
+        repos = TEST_PAYLOAD[0][1]
+        own_mock = Mock()
+        own_mock.json = Mock(return_value=own)
+        cls.own_mock = own_mock
+        repos_mock = Mock()
+        repos_mock.json = Mock(return_value=repos)
+        cls.repos_mock = repos_mock
+
+        cls.get_patcher = patch("requests.get")
+        cls.get = cls.get_patcher.start()
+        Dict = {cls.org_payload["repos_url"]: repos_mock}
+        cls.get.side_effect = lambda x: Dict.get(x, own_mock)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """stops the get_patcher"""
+        cls.get_patcher.stop()
