@@ -1,4 +1,6 @@
 import mysql.connector
+import os
+
 
 class DatabaseConnection:
     def __init__(self, host, password, user, database):
@@ -27,3 +29,16 @@ class DatabaseConnection:
             else:
                 self.connection.rollback()
             self.connection.close()
+
+if __name__ == "__main__":
+    host = os.getenv("DB_HOST")
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
+    database = os.getenv("DB_NAME")
+
+    with DatabaseConnection(host, password, user, database) as cursor:
+        cursor.execute("SELECT * FROM users")
+        results = cursor.fetchall()
+
+        for row in results:
+            print(row)
