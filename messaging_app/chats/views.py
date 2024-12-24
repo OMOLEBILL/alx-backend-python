@@ -58,3 +58,14 @@ class MessageViewSet(viewsets.ModelViewSet):
         response.data["message"] = "Message created successfully!"
         response.status_code = status.HTTP_201_CREATED
         return response
+    
+    def get_queryset(self):
+        """
+        If a conversation_pk is present (from the nested route),
+        return only messages for that conversation.
+        Otherwise, return all messages.
+        """
+        conversation_id = self.kwargs.get('conversation_pk')
+        if conversation_id:
+            return self.queryset.filter(conversation_id=conversation_id)
+        return super().get_queryset()
