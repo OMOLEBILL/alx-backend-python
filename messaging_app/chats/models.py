@@ -70,6 +70,7 @@ class Message(models.Model):
     sender_id = models.ForeignKey(user, on_delete=models.CASCADE, related_name='messages')
     message_body = models.TextField(null=False, blank=False)
     sent_at = models.DateTimeField(auto_now_add=True)
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages', null=True,  blank=True)
 
     class Meta:
         indexes = [
