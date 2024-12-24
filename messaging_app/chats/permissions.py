@@ -19,3 +19,29 @@ class IsMessageSender(BasePermission):
     def has_object_permission(self, request, view, obj):
         # 'obj' is a Message instance
         return obj.sender_id == request.user
+
+class IsParticipantOfConversation(BasePermission):
+    """
+    Allows access only to participants of the conversation for viewing,
+    creating, updating, or deleting messages and conversations.
+    Assumes:
+      - Conversation has a field: participants (ManyToMany) or participants_id (ForeignKey)
+      - Message links to a Conversation via 'conversation' FK or
+        we can retrieve conversation from obj if it's already a Conversation instance.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        """
+        If `obj` is a Conversation, check if request.user is in participants.
+        If `obj` is a Message, check if request.user is in the conversation participants.
+        """
+        # Identify the conversation object
+        if hasattr(obj, 'participants'):  
+            return obj.participants_id == request.user
+
+        if hasattr(obj, 'conversation'):
+            conversation = obj.conversation
+            return conversation.participants_id == request.user
+
+
+        return False

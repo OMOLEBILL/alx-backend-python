@@ -3,7 +3,7 @@ from rest_framework import viewsets, status, filters, permissions
 from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
-from .permissions import IsConversationParticipant, IsMessageSender
+from .permissions import IsConversationParticipant, IsMessageSender, IsParticipantOfConversation
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -11,7 +11,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     """
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [permissions.IsAuthenticated, IsConversationParticipant]
+    permission_classes = [IsParticipantOfConversation]
 
     # allow searching conversations by conversation_id
     filter_backends = [filters.SearchFilter]
@@ -75,4 +75,4 @@ class MessageViewSet(viewsets.ModelViewSet):
         conversation_id = self.kwargs.get('conversation_pk')
         if conversation_id:
             return self.queryset.filter(conversation_id=conversation_id)
-        return super().get_queryset().filter(sender_id=self.request.user)
+        return super().get_queryset().filter(conversation__participants_id=self.request.user)
