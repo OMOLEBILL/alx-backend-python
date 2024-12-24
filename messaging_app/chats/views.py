@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status, filters, permissions
 from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
+from .permissions import IsConversationParticipant, IsMessageSender
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -10,6 +11,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     """
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+    permission_classes = [permissions.IsAuthenticated, IsConversationParticipant]
 
     # allow searching conversations by conversation_id
     filter_backends = [filters.SearchFilter]
@@ -27,6 +29,10 @@ class ConversationViewSet(viewsets.ModelViewSet):
             )
 
         return super().create(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        # Ensure only conversations where the user is the participant
+        return super().get_queryset().filter(participants_id=self.request.user)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -35,6 +41,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsMessageSender]
 
     filter_backends = [filters.SearchFilter]
     search_fields = ['message_body']
@@ -68,4 +75,4 @@ class MessageViewSet(viewsets.ModelViewSet):
         conversation_id = self.kwargs.get('conversation_pk')
         if conversation_id:
             return self.queryset.filter(conversation_id=conversation_id)
-        return super().get_queryset()
+        return super().get_queryset().filter(sender_id=self.request.user)

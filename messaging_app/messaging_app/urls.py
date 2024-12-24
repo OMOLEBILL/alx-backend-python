@@ -17,9 +17,23 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+
+    #Main API routes (conversations, messages, etc.)
     path("api/", include('chats.urls')),
-    path('api-auth/', include('rest_framework.urls'))
+
+    # Session-based login for the browsable API (optional)
+    path('api-auth/', include('rest_framework.urls')),
+
+    # Simple JWT URLs
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
