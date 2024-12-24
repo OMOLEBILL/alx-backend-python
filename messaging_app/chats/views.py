@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, status, filters
+from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 
@@ -10,6 +11,23 @@ class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
 
+    # allow searching conversations by conversation_id
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['conversation_id'] 
+
+    def create(self, request, *args, **kwargs):
+        """
+        Override create() to add custom validation logic.
+        """
+        participants_id = request.data.get("participants_id", None)
+        if not participants_id:
+            return Response(
+                {"detail": "participants_id is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return super().create(request, *args, **kwargs)
+
 
 class MessageViewSet(viewsets.ModelViewSet):
     """
@@ -17,4 +35,26 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-   
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['message_body']
+
+    def create(self, request, *args, **kwargs):
+        """
+        Override create() to handle custom response status codes.
+        Example scenario:
+          - If the `sender_id` or `message_body` is missing, return 400.
+        """
+        sender_id = request.data.get("sender_id")
+        message_body = request.data.get("message_body")
+
+        if not sender_id or not message_body:
+            return Response(
+                {"detail": "sender_id and message_body are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        response = super().create(request, *args, **kwargs)
+        response.data["message"] = "Message created successfully!"
+        response.status_code = status.HTTP_201_CREATED
+        return response
