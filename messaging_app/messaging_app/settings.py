@@ -76,7 +76,7 @@ WSGI_APPLICATION = "messaging_app.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.msyql",
+        "ENGINE": "django.db.backends.mysql",
         "NAME": "messaging_app",
         "USER": "root",
         "PASSWORD": "",
