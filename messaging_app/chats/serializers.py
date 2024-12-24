@@ -5,6 +5,8 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializes the custom `user` model, including all fields you specified.
     """
+    full_name = serializers.CharField(source='get_full_name', read_only=True)
+    role_display = serializers.SerializerMethodField()
     class Meta:
         model = user
         fields = [
@@ -17,8 +19,20 @@ class UserSerializer(serializers.ModelSerializer):
             'role',
             'created_at',
             'username', 
+            'full_name'
+            'role_display'
         ]
-
+    
+    def get_role_display(self, obj):
+        return obj.get_role_display()
+    
+    def validate_email(self, value):
+        """
+        Check that the email is unique.
+        """
+        if user.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with that email already exists.")
+        return value
 
 class MessageSerializer(serializers.ModelSerializer):
     """
