@@ -3,7 +3,9 @@ from rest_framework import viewsets, status, filters, permissions
 from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
-from .permissions import IsConversationParticipant, IsMessageSender, IsParticipantOfConversation
+from .permissions import IsParticipantOfConversation
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import MessageFilter 
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -41,10 +43,16 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsMessageSender]
+    permission_classes = [IsParticipantOfConversation]
 
     filter_backends = [filters.SearchFilter]
     search_fields = ['message_body']
+
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = MessageFilter
+
+    ordering_fields = ['sent_at']
+    ordering = ['-sent_at']
 
     def create(self, request, *args, **kwargs):
         """
