@@ -61,11 +61,10 @@ def inbox_view(request):
     """
     Display the inbox with only unread messages for the logged-in user.
     """
-    user = request.user
-    # Use the custom manager to get unread messages for the current user
-    unread_messages = Message.unread.for_user(user)
+    #.only('id', 'sender', 'content', 'timestamp')
+    unread_messages = Message.unread.unread_for_user(request.user)
 
     context = {
-        'unread_messages': unread_messages,
+        'unread_messages': unread_messages
     }
     return render(request, 'templates/inbox.html', context)
