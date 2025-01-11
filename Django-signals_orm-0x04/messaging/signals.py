@@ -44,8 +44,13 @@ def log_message_edit(sender, instance, **kwargs):
             # Mark the message as edited
             instance.edited = True
 
+            # Attempt to retrieve the user who edited the message
+            # This assumes `instance._edited_by` was set before saving.
+            edited_by = getattr(instance, '_edited_by', None)
+
             # Create a history record for the old content
             MessageHistory.objects.create(
                 message=old_message,
-                old_content=old_message.content
+                old_content=old_message.content,
+                edited_by=edited_by
             )

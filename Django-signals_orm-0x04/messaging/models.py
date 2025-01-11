@@ -28,6 +28,13 @@ class Message(models.Model):
         default=False,
         help_text="Indicates whether the message has been edited."
     )
+    edited_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="The user who edited the message."
+    )
 
     def __str__(self):
         # Return a string representation of the message
