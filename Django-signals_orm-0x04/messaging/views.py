@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth.models import User
+from django.views.decorators.cache import cache_page
 from django.db import models
 from .models import Message
 
@@ -68,3 +68,14 @@ def inbox_view(request):
         'unread_messages': unread_messages
     }
     return render(request, 'templates/inbox.html', context)
+
+
+@cache_page(60)
+def conversation_list_view(request):
+    """
+    A view that lists messages in a conversation.
+    This view is cached for 60 seconds using the cache_page decorator.
+    """
+    
+    context = {'example': 'Messages would be listed here...'}
+    return render(request, 'conversation_list.html', context)
