@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class UnreadMessagesManager(models.Manager):
+    def for_user(self, user):
+        """
+        Return a queryset of unread messages for the given user,
+        retrieving only necessary fields for performance.
+        """
+        # Filter messages where receiver is the specified user and read is False.
+        return self.filter(receiver=user, read=False).only('id', 'sender', 'content', 'timestamp')
+
 class Message(models.Model):
     """
     Model representing a message sent from one user to another.
@@ -43,6 +52,14 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         help_text="The message this message is replying to."
     )
+    read = models.BooleanField(
+        default=False, 
+        help_text="Indicates whether the message has been read.")
+    
+    # Define the default manager
+    objects = models.Manager()  
+    # Add the custom unread messages manager
+    unread = UnreadMessagesManager()
 
     def __str__(self):
         # Return a string representation of the message

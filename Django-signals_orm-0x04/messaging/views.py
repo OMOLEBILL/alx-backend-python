@@ -54,3 +54,18 @@ def message_thread_view(request, message_id):
         'threaded_replies': threaded_replies,
     }
     return render(request, 'templates/message_thread.html', context)
+
+
+@login_required
+def inbox_view(request):
+    """
+    Display the inbox with only unread messages for the logged-in user.
+    """
+    user = request.user
+    # Use the custom manager to get unread messages for the current user
+    unread_messages = Message.unread.for_user(user)
+
+    context = {
+        'unread_messages': unread_messages,
+    }
+    return render(request, 'templates/inbox.html', context)
