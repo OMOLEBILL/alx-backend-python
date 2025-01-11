@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Delete Account</title></head>
+<body>
+  <h2>Delete Account</h2>
+  <p>Are you sure you want to delete your account, {{ user.username }}?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete my account</button>
+    <a href="{% url 'profile' %}">Cancel</a>
+  </form>
+</body>
+</html>
