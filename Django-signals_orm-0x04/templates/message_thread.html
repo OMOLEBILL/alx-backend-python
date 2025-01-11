@@ -1,0 +1,24 @@
+<h2>Conversation Thread</h2>
+<div>
+  <p><strong>{{ root_message.sender.username }}</strong>: {{ root_message.content }}</p>
+  <small>Sent at: {{ root_message.timestamp }}</small>
+</div>
+
+{% macro render_replies(replies) %}
+  <ul>
+    {% for reply in replies %}
+      <li>
+        <p><strong>{{ reply.sender.username }}</strong>: {{ reply.content }}</p>
+        <small>Sent at: {{ reply.timestamp }}</small>
+        {% if reply.threaded_replies %}
+          {{ render_replies(reply.threaded_replies) }}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
+<div>
+  <h3>Replies:</h3>
+  {{ render_replies(threaded_replies) }}
+</div>

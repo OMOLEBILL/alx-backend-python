@@ -35,6 +35,14 @@ class Message(models.Model):
         blank=True,
         help_text="The user who edited the message."
     )
+    parent_message = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='replies',
+        on_delete=models.CASCADE,
+        help_text="The message this message is replying to."
+    )
 
     def __str__(self):
         # Return a string representation of the message
