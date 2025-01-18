@@ -1,5 +1,5 @@
 """
-ASGI config for messaging_app project.
+ASGI config for Django-Middleware-0x03 project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "messaging_app.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Django-Middleware-0x03.settings")
 
 application = get_asgi_application()
