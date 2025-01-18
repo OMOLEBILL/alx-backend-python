@@ -6,6 +6,8 @@ from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipantOfConversation
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import MessageFilter 
+from django.http import JsonResponse
+from chats.models import user
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -84,3 +86,8 @@ class MessageViewSet(viewsets.ModelViewSet):
         if conversation_id:
             return self.queryset.filter(conversation_id=conversation_id)
         return super().get_queryset().filter(conversation__participants_id=self.request.user)
+
+
+def get_user_ids(request):
+    users = user.objects.values_list('user_id', flat=True)
+    return JsonResponse({'user_ids': list(users)})

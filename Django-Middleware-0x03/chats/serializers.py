@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             'role',
             'created_at',
             'username', 
-            'full_name'
+            'full_name',
             'role_display'
         ]
     
@@ -50,7 +50,7 @@ class MessageSerializer(serializers.ModelSerializer):
             'sender_id',     
             'sender',     
             'message_body',
-            'sent_at'
+            'sent_at',
             'conversation' 
         ]
 
