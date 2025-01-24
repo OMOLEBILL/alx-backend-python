@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Copy requirements.txt before the rest of your code for efficient caching
-COPY messaging_app/requirements.txt /app/
+COPY requirements.txt /app/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
@@ -20,5 +20,5 @@ COPY . /app/
 # Expose port 8000 to enable external access to the app
 EXPOSE 8000
 
-# Start Django on port 8000 when the container starts
+# Start Django on port 8000 when the container starts -p 8000:8000
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
