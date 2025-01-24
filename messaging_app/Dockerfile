@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Copy requirements.txt before the rest of your code for efficient caching
-COPY requirements.txt /app/
+COPY messaging_app/requirements.txt /app/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
