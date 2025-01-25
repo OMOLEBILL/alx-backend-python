@@ -13,9 +13,9 @@ services:
       - mysql_data:/var/lib/mysql
 
   web:
-    build: .
+    build: 
+      context: .
     container_name: messaging_web
-    command: python3 manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     depends_on:
@@ -27,7 +27,7 @@ services:
       DB_HOST: db
       DB_PORT: "3306"
     volumes:
-      - .:/app
+      - ../:/app
 
 volumes:
   mysql_data:
