@@ -1,0 +1,16 @@
+echo "Scaling the deployment to 3 replicas..."
+kubectl scale deployment messaging-app --replicas=3
+kubectl get pods
+
+# Port-forward the service for local access
+kubectl port-forward service/messaging-app-service 8000:8000 &
+PORT_FORWARD_PID=$!
+sleep 3
+
+# Run wrk for load testing
+wrk -t4 -c100 -d30s http://localhost:8000
+
+# Stop port-forwarding
+kill $PORT_FORWARD_PID
+
+kubectl top pods
