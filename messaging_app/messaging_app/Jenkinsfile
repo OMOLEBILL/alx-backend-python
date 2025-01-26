@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10' 
+        }
+    }
 
     environment {
         VENV = "${WORKSPACE}/venv"
@@ -25,7 +29,6 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-
                 sh '''
                 source ${VENV}/bin/activate
                 pytest --junitxml=test-results.xml
