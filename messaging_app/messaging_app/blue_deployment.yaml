@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: messaging-web
-          image: omlle/messaging_app-web
+          image: omlle/messaging_app-web:2.0
           ports:
             - containerPort: 8000
           env:
